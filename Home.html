@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="style.css" rel="stylesheet">
+    <title>Guardian Loans - Home</title>
+    <style>
+        /* Basic resets and body styles */
+        
+        /* Main styles */
+        
+        
+    </style>
+</head>
+<body>
+    <header>
+        <div class="top">
+            <h1 class="top-text">Strive For Light</h1>
+        </div>
+        <nav id="collapsible-menu" class="hidden">
+            <ul>
+                <li><a onclick="window.location.href='Home.html'" href="#home">Home</a></li>
+                <li><a href="#about" onclick="window.location.href='A.html'">About Us</a></li>
+                <li><a href="#login">Log In</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#help">Help</a></li>
+                <li><a href="#signup" onclick="window.location.href='signUp.html'">Sign Up</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="login">
+            <div class="info-holder">
+                <fieldset>
+                    <legend><b>Login to Your Account</b></legend>
+                    <form action="/path/to/your/login/endpoint" method="post">
+                        <div class="form-group">
+                            <label for="username">Username:</label>
+                            <input class="user-name" id="username" type="text" placeholder="e.g Thalitha2004" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input class="user-password" id="password" type="password" placeholder="Enter your password" required>
+                        </div>
+                    
+                        <div class="form-group-SignUp terms">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            I agree to the 
+                            <a href="terms.html" target="_blank">Terms and Conditions</a> and <a href="privacy.html" target="_blank">Privacy Policy</a>.
+                        </div>
+                        <div class="buttons">
+                            <button onclick="window.location.href='signUp.html'" type="button">Sign Up</button>
+                            <button onclick="window.location.href='SignIn.html'" type="submit">Sign In</button>
+                        </div>
+                    </form>
+                </fieldset>
+            </div>
+        </section>
+    </main>
+
+    <footer class="home">
+        <p>© 2023 Strive For Light. All rights reserved.</p>
+        <div class="social-media">
+            <a href="#facebook">Facebook</a>
+            <a href="#twitter">Twitter</a>
+            <a href="#linkedin">LinkedIn</a>
+        </div>
+    </footer>
+
+    <!-- Enhanced Chatbot -->
+    <div id="chatbot">
+        <div>
+            Chatbot
+            <button onclick="toggleChatbot()" style="float:right; background: transparent; color: white; border: none;">X</button>
+        </div>
+        <div id="chatContent">
+            <!-- Chat messages will go here -->
+        </div>
+        <input id="userMessage" type="text" placeholder="Type your message..." autofocus>
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <button onclick="toggleChatbot()" style="position: fixed; bottom: 0; right: 20px; z-index: 1000;">Chat with us!</button>
+
+    <script>
+        function toggleChatbot() {
+            const chatbot = document.getElementById("chatbot");
+            chatbot.style.display = chatbot.style.display === "none" ? "block" : "none";
+        }
+
+        function sendMessage() {
+            const userMessage = document.getElementById("userMessage").value;
+            if (userMessage.trim() === "") return;
+
+            const chatContent = document.getElementById("chatContent");
+            chatContent.innerHTML += `<div class="user-message"><div class="message">${userMessage}</div></div>`;
+            
+            let botResponse = getBotResponse(userMessage);
+            chatContent.innerHTML += `<div class="bot-message"><div class="message">${botResponse}</div></div>`;
+            
+            document.getElementById("userMessage").value = "";
+            chatContent.scrollTop = chatContent.scrollHeight; // Scroll to the latest message
+        }
+
+        function getBotResponse(userMessage) {
+            const responses = {
+                "hi": "Hello! 😊 How can I assist you today?",
+                "help": "Sure! What do you need help with?",
+                "what services do you offer?": "We offer various loan services. How can I assist you?",
+                "bye": "Goodbye! Have a wonderful day! 👋",
+                "": "Please type something for me to help you with! 😊"
+            };
+            return responses[userMessage.toLowerCase()] || responses[""];
+        }
+    </script>
+</body>
+</html>

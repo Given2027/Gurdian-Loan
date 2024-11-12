@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="style.css" rel="stylesheet">
+    <title>Loan Page</title>
+    <script>
+        let countdownInterval;
+        let paymentCountdownInterval;
+
+        function calculateReturn() {
+            const borrowAmount = parseFloat(document.getElementById('borrowAmount').value);
+            const returnMonths = parseInt(document.getElementById('returnMonths').value);
+            let interestRate;
+
+            if (returnMonths === 1 || returnMonths < 3) {
+                interestRate = 0.40; // 40% per month
+            } else if (returnMonths > 6) {
+                interestRate = 0.40; // 40% per month
+            } else {
+                interestRate = 0.20; // 20% per month for 3 to 6 months
+            }
+
+            const totalReturn = borrowAmount ? (borrowAmount * (1 + interestRate * returnMonths)) : 0;
+
+            document.getElementById('amountToReturn').innerText = `Total to be returned: $${totalReturn.toFixed(2)}`;
+        }
+
+        function setUpDebitOrder() {
+            // Gather the user details
+            const borrowDate = document.getElementById('borrowDate').value;
+            const returnMonths = parseInt(document.getElementById('returnMonths').value);
+            const borrowAmount = parseFloat(document.getElementById('borrowAmount').value);
+            const outstandingAmount = parseFloat(document.getElementById('outstandingAmount').value);
+            const userEmail = document.getElementById('email').value;
+
+            // Check if all fields are filled
+            if (!borrowDate || !returnMonths || !borrowAmount || !outstandingAmount || !userEmail) {
+                alert("Please fill in all fields to set up the debit order.");
+                return;
+            }
+
+            // Here you would typically make a request to your server to set up the debit order
+            // For now, let's simulate a successful debit order setup
+            alert(`Debit order set up successfully for $${borrowAmount} to be paid over ${returnMonths} months.`);
+            
+            // Simulate a notification
+            document.getElementById('notificationDisplay').innerText = `Notification: Debit order has been set up. Amount: $${borrowAmount} over ${returnMonths} months.`;
+        }
+
+        function showStatus(isApproved) {
+            const statusText = document.getElementById('statusText');
+            const outstandingBalanceText = document.getElementById('outstandingBalance');
+            const borrowDate = document.getElementById('borrowDate').value;
+            const returnMonths = parseInt(document.getElementById('returnMonths').value);
+
+            if (isApproved) {
+                const outstandingBalance = parseFloat(document.getElementById('outstandingAmount').value) || 0;
+                statusText.innerText = "Your application has been approved!";
+                outstandingBalanceText.innerText = `Outstanding Balance: $${outstandingBalance.toFixed(2)}`;
+                
+                startCountdown(borrowDate, returnMonths);
+                setUpDebitOrder(); // Set up debit order upon approval
+            } else {
+                statusText.innerText = "Your application has been declined.";
+                outstandingBalanceText.innerText = "";
+                document.getElementById('countdownText').innerText = "";
+                document.getElementById('paymentCountdownText').innerText = "";
+                clearInterval(countdownInterval);
+                clearInterval(paymentCountdownInterval);
+            }
+        }
+
+        function showCreditScore() {
+            const income = document.getElementById('income').value;
+            const monthlyDebit = document.getElementById('monthlyDebit').value;
+
+            let creditScore = Math.floor((income - monthlyDebit) / 100);
+            creditScore = (creditScore < 300) ? 300 : (creditScore > 850) ? 850 : creditScore;
+
+            document.getElementById('creditScoreDisplay').innerText = `Your Credit Score: ${creditScore}`;
+            document.getElementById('creditScoreSection').style.display = 'block';
+        }
+
+        window.onload = function() {
+            // Set countdown dates for 30 days later from now
+            const now = new Date();
+            document.getElementById('countdownText').innerText = `Time remaining: 30d 0h 0m 0s`;
+            document.getElementById('paymentCountdownText').innerText = `Time remaining: 30d 0h 0m 0s`;
+
+            showCreditScore(); // Automatically calculate and show credit score on page load
+        };
+    </script>
+</head>
+
+<body>
+    <header>
+        <div class="top">
+            <h1 class="top-text">Strive For Light Loans</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a onclick="window.location.href='Home.html'" href="#home">Home</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#help">Help</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="Bank-Details">
+        <div class="info-holder-SignUP">
+            <!-- Credit Score Display Section -->
+            <div id="creditScoreSection" style="text-align: center; margin-top: 20px;">
+                <h2>Credit Score Information</h2>
+                <p id="creditScoreDisplay">Your Credit Score: Not calculated yet</p>
+            </div>
+
+            <legend>Financial Request Field</legend>
+            <form onsubmit="return false;">
+                <div class="form-group">
+                    <input class="TextBox-SignUp" type="number" id="income" placeholder="Enter Monthly Income" required>
+                </div>
+                <div class="form-group">
+                    <input class="TextBox-SignUp" type="number" id="monthlyDebit" placeholder="Enter Monthly Debit" required>
+                </div>
+                <div class="form-group">
+                    <input class="TextBox-SignUp" type="number" id="borrowAmount" placeholder="Enter Amount Borrowed" required>
+                </div>
+                <div class="form-group">
+                    <input class="TextBox-SignUp" type="number" id="outstandingAmount" placeholder="Enter Outstanding Amount" required>
+                </div>
+                <div class="form-group">
+                    <input class="TextBox-SignUp" type="date" id="borrowDate" placeholder="Date Loan Borrowed" required>
+                </div>
+                <div class="form-group">
+                    <input class="TextBox-SignUp" type="number" id="returnMonths" placeholder="Months to Return" required>
+                </div>
+                <div class="form-group">
+                    <input class="TextBox-SignUp" type="email" id="email" placeholder="Enter Your Email" required>
+                </div>
+
+                <div class="form-group">
+                    <p id="returnDateDisplay"></p> <!-- Display the due date here -->
+                    <p id="nextPaymentDisplay"></p> <!-- Display the next payment due date -->
+                </div>
+
+                <button type="button" onclick="calculateReturn()">Calculate Return</button>
+                
+                <div id="amountToReturn" class="amount-return"></div>
+                
+                <button type="button" onclick="showStatus(true)">Simulate Approval</button>
+                <button type="button" onclick="showStatus(false)">Simulate Decline</button>
+            </form>
+            <div id="statusText" class="status-text"></div>
+            <div id="countdownText" class="countdown">Time remaining: 30d 0h 0m 0s</div> <!-- Default countdown text -->
+            <div id="paymentCountdownText" class="payment-countdown">Time remaining: 30d 0h 0m 0s</div> <!-- Default countdown text -->
+            <div id="outstandingBalance" class="outstanding-balance"></div>
+            <div id="notificationDisplay" class="notification-display" style="margin-top: 15px;"></div> <!-- Notification area -->
+        </div>
+
+    </main>
+
+    <footer class="SignUp">
+        <p>© 2023 Strive For Light Loans. All rights reserved.</p>
+        <div class="social-media">
+            <a href="#facebook">Facebook</a>
+            <a href="#twitter">Twitter</a>
+            <a href="#linkedin">LinkedIn</a>
+        </div>
+    </footer>
+</body>
+
+</html>
